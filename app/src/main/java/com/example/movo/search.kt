@@ -16,6 +16,7 @@ import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.Exception
 import java.util.HashMap
 
 class search : AppCompatActivity() {
@@ -26,10 +27,13 @@ class search : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         if(intent.hasExtra("list")){
             list=intent.getStringArrayListExtra("list")!!
-        }else{
+        }else if(intent.hasExtra("moviename")){
             findViewById<ConstraintLayout>(R.id.constraintLayout).visibility=View.GONE
             searchMovie(intent.getStringExtra("moviename")!!)
             list= arrayListOf()
+        }else{
+            list= arrayListOf()
+
         }
         findViewById<ImageView>(R.id.search).setOnClickListener{
             searchMovie(findViewById<EditText>(R.id.sfrc_edtSearch).text.toString())
@@ -47,6 +51,7 @@ class search : AppCompatActivity() {
         inn.putExtra("list",list)
         inn.putExtra("listname",intent.getStringExtra("listname"))
         startActivity(inn)
+        finish()
     }
 
     private fun searchMovie(movie: String) {
@@ -55,6 +60,9 @@ class search : AppCompatActivity() {
             Method.POST, url,
             Response.Listener { response ->
                 findViewById<LinearLayout>(R.id.data).visibility= View.VISIBLE
+                try {
+
+
                 var jsonObject= JSONObject(response)
                 Picasso.get().load(jsonObject.getString("Poster")).into(findViewById<ImageView>(R.id.poster))
                 findViewById<TextView>(R.id.title).text=jsonObject.getString("Title")
@@ -68,8 +76,9 @@ class search : AppCompatActivity() {
                 movieID=jsonObject.getString("imdbID")+"%"+jsonObject.getString("Title")
                 if(intent.hasExtra("from")){
                     findViewById<CardView>(R.id.addthismoviecard).visibility=View.VISIBLE
-                }else{
-
+                }}
+                catch ( e:Exception){
+                    Toast.makeText(applicationContext,e.localizedMessage,Toast.LENGTH_SHORT).show()
                 }
 
             },

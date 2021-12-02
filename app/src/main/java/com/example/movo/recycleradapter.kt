@@ -32,6 +32,7 @@ class recycleradapter(
             if(!list[position].contains("%")){
                 var intent= Intent(context,createlist::class.java)
                 intent.putExtra("listfromadapter", movies!![list[position]])
+                intent.putExtra("playlistname", list[position])
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }else{

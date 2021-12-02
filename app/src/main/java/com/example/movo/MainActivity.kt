@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,14 +35,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        findViewById<ImageView>(R.id.search)
         findViewById<Button>(R.id.createlist).setOnClickListener{
             findViewById<ConstraintLayout>(R.id.consplaylistname).visibility= View.VISIBLE
         }
         findViewById<Button>(R.id.go).setOnClickListener{
-            var intent=Intent(this,createlist::class.java)
-            var e:String=findViewById<EditText>(R.id.listname).text.toString()
-            intent.putExtra("listname",e)
-            startActivity(intent)
+            if(findViewById<EditText>(R.id.listname).text.toString()==""){
+                Toast.makeText(applicationContext,"Enter name",Toast.LENGTH_SHORT).show()
+            }else {
+                var intent = Intent(this, createlist::class.java)
+                var e: String = findViewById<EditText>(R.id.listname).text.toString()
+                intent.putExtra("listname", e)
+                startActivity(intent)
+            }
+        }
+        findViewById<ImageView>(R.id.home_search).setOnClickListener{
+            startActivity(Intent(applicationContext,search::class.java))
         }
 
 
