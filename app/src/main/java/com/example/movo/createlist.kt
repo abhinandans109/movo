@@ -85,8 +85,7 @@ class createlist : AppCompatActivity() {
             recyclerView.layoutManager=LinearLayoutManager(applicationContext)
         }else{
              var uri=intent.data
-            findViewById<CardView>(R.id.cardView3).visibility=View.GONE
-            findViewById<CardView>(R.id.cardView).visibility=View.GONE
+
             if(uri!=null){
                 var list3=uri.pathSegments
                 var mode=list3[2];
@@ -97,7 +96,8 @@ class createlist : AppCompatActivity() {
                         if (data != null) {
                             for ((key,value) in data){
                                 if(key==list3[1]){
-
+                                    findViewById<CardView>(R.id.cardView3).visibility=View.GONE
+                                    findViewById<CardView>(R.id.cardView).visibility=View.GONE
                                     findViewById<CardView>(R.id.shareplaylist).visibility=View.VISIBLE
                                     adapter= recycleradapter(applicationContext,
                                         value as ArrayList<String>, null)
@@ -130,6 +130,8 @@ class createlist : AppCompatActivity() {
                         }
                     }
                 }else{
+                    findViewById<CardView>(R.id.cardView3).visibility=View.GONE
+                    findViewById<CardView>(R.id.cardView).visibility=View.GONE
                     Toast.makeText(applicationContext,"You dont have access to this list",Toast.LENGTH_SHORT).show()
                 }
             }
