@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "161467446806",
+    "project_id": "kotlin-29fcc",
+    "storage_bucket": "kotlin-29fcc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161467446806:android:3058338d9d962058fde737",
+        "android_client_info": {
+          "package_name": "com.example.movo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "161467446806-lt84qcigvoltn5ugl86cknm4467ss1mb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movo",
+            "certificate_hash": "bd5f501a0d01a6634250df518d894ea08b82b92c"
+          }
+        },
+        {
+          "client_id": "161467446806-5cuf9u7o6tsruhied0l8a7v5hagfi03o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7uPG97UPW_nw-uYC5RFGlzAC2Ppy9SRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "161467446806-5cuf9u7o6tsruhied0l8a7v5hagfi03o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
