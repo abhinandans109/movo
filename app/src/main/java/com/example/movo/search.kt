@@ -9,6 +9,9 @@ import android.view.View
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.util.rangeTo
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.AuthFailureError
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
@@ -20,79 +23,62 @@ import java.lang.Exception
 import java.util.HashMap
 
 class search : AppCompatActivity() {
-    var movieID:String=""
-    lateinit var list:ArrayList<String>
+    lateinit var list:ArrayList<movieModel>
+    lateinit var adapter:recycleradapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        if(intent.hasExtra("list")){
-            list=intent.getStringArrayListExtra("list")!!
-        }else if(intent.hasExtra("moviename")){
+        list= arrayListOf()
+        adapter= recycleradapter(applicationContext,list)
+        findViewById<RecyclerView>(R.id.rv_list).adapter=adapter
+        findViewById<RecyclerView>(R.id.rv_list).layoutManager= LinearLayoutManager(applicationContext)
+      if(intent.hasExtra("moviename")){
             findViewById<ConstraintLayout>(R.id.constraintLayout).visibility=View.GONE
-            searchMovie(intent.getStringExtra("moviename")!!)
-            list= arrayListOf()
-        }else{
-            list= arrayListOf()
-
+          list= arrayListOf()
+          searchMovie(intent.getStringExtra("moviename")!!)
         }
         findViewById<ImageView>(R.id.search).setOnClickListener{
+            list.clear()
             searchMovie(findViewById<EditText>(R.id.sfrc_edtSearch).text.toString())
         }
-        findViewById<Button>(R.id.addthismovie).setOnClickListener{
-            addmovie(movieID)
-        }
-
 
     }
-
-    private fun addmovie(movieID: String) {
-        list.add(movieID)
-        var inn=Intent(applicationContext,createlist::class.java)
-        inn.putExtra("list",list)
-        inn.putExtra("listname",intent.getStringExtra("listname"))
-        startActivity(inn)
-        finish()
-    }
-
     private fun searchMovie(movie: String) {
-        val url = "https://www.omdbapi.com/?t=$movie&plot=full&apikey=183144ca"
-        val stringRequest: StringRequest = object : StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                findViewById<LinearLayout>(R.id.data).visibility= View.VISIBLE
-                try {
+            val url = "https://api.tvmaze.com/search/shows?q=$movie"
+            val stringRequest: StringRequest = object : StringRequest(
+                Method.GET, url,
+                Response.Listener { response ->
+                    try {
+                        val jsonArray=JSONArray(response)
+                        for (i in 0 until jsonArray.length()-1){
+                            var obj=(jsonArray[i] as JSONObject).getJSONObject("show")
+                            var genres=""
+                            var gen=obj.getJSONArray("genres")
+                            for (j in 0 until gen.length()-1)
+                                genres+=gen[j]
 
+                            var movieModel=movieModel(obj.getJSONObject("image").getString("medium"),obj.getString("summary"),obj.getString("name"),obj.getJSONObject("externals").getString("imdb"),obj.getString("language"),genres)
+                            list.add(movieModel)
+                            adapter.notifyDataSetChanged()
 
-                var jsonObject= JSONObject(response)
-                Picasso.get().load(jsonObject.getString("Poster")).into(findViewById<ImageView>(R.id.poster))
-                findViewById<TextView>(R.id.title).text=jsonObject.getString("Title")
-                findViewById<TextView>(R.id.year).text=jsonObject.getString("Year")
-                findViewById<TextView>(R.id.runtime).text=jsonObject.getString("Runtime")
-                findViewById<TextView>(R.id.genere).text=jsonObject.getString("Genre")
-                findViewById<TextView>(R.id.actors).text=jsonObject.getString("Actors")
-                findViewById<TextView>(R.id.language).text=jsonObject.getString("Language")
-                findViewById<TextView>(R.id.imdb).text=jsonObject.getString("imdbRating")
-                findViewById<TextView>(R.id.plot).text=jsonObject.getString("Plot")
-                movieID=jsonObject.getString("imdbID")+"%"+jsonObject.getString("Title")
-                if(intent.hasExtra("from")){
-                    findViewById<CardView>(R.id.addthismoviecard).visibility=View.VISIBLE
-                }}
-                catch ( e:Exception){
-                    Toast.makeText(applicationContext,e.localizedMessage,Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    catch ( e: Exception){
+                        Toast.makeText(applicationContext,e.localizedMessage,Toast.LENGTH_SHORT).show()
+                    }
+
+                },
+                Response.ErrorListener { error ->
+                    Log.e("responseerror",error!!.localizedMessage.toString())
+                }) {
+                @Throws(AuthFailureError::class)
+                override fun getParams(): Map<String, String>? {
+                    val params: MutableMap<String, String> = HashMap()
+                    return params
                 }
-
-            },
-            Response.ErrorListener { error ->
-                Log.e("responseerror",error.localizedMessage)
-            }) {
-            @Throws(AuthFailureError::class)
-            override fun getParams(): Map<String, String>? {
-                val params: MutableMap<String, String> = HashMap()
-                return params
             }
-        }
-        val requestQueue = Volley.newRequestQueue(this)
-        requestQueue.add(stringRequest)
+            val requestQueue = Volley.newRequestQueue(this)
+            requestQueue.add(stringRequest)
 
     }
 }
